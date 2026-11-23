@@ -1,0 +1,13 @@
+{
+  "project_id": "m10",
+  "name": "光伏运行效率监测",
+  "version": "0.1.0-dev",
+  "entrypoint": "start.cmd",
+  "stop_entrypoint": "stop.cmd",
+  "health_url": "http://127.0.0.1:8000/api/health",
+  "runtime_mode": "local",
+  "required_files": ["frontend/index.html", "frontend/app.js", "frontend/app.css"],
+  "backend_entrypoints": ["backend/app.py", "backend/main.py"],
+  "windows_x64": {"status": "not_verified", "build_environment": "pending"},
+  "diagnostics": {"log_dir": "logs", "pid_file": "runtime/m10.pid"}
+}

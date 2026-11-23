@@ -1,0 +1,39 @@
+{
+  "dataset_id": "pvdaq-system10-2006-07-10",
+  "source": {
+    "catalog_url": "https://catalog.data.gov/dataset/photovoltaic-data-acquisition-pvdaq-public-datasets",
+    "data_url": "https://oedi-data-lake.s3.amazonaws.com/pvdaq/csv/pvdata/system_id=10/year=2006/month=7/day=10/system_10__date_2006_07_10.csv",
+    "systems_url": "https://oedi-data-lake.s3.amazonaws.com/pvdaq/csv/systems_20250729.csv",
+    "provider": "NREL / DOE PVDAQ via OEDI data lake",
+    "license": "CC BY 4.0 as recorded by the Data.gov catalog entry; verify terms before redistribution",
+    "retrieved_utc": "2026-11-22",
+    "raw_sha256": "a53c596c8a051f89d16c0132357a2764f663b6b98dd29fe00a552795fb90078e",
+    "systems_sha256": "54ddbd1ef044a7eb822ddf8bf3e53f319606598cc37b20d05c96b4631e03d65c"
+  },
+  "system_metadata": {
+    "system_id": "10",
+    "system_public_name": "NREL CIS -1",
+    "site_location": "Golden, CO",
+    "latitude": "39.7404",
+    "longitude": "-105.1774",
+    "dc_capacity_kW": "1.12",
+    "qa_status": "pass"
+  },
+  "mapping": {
+    "measured_on": "timestamp",
+    "system_id": "station_id",
+    "poa_irradiance__421": "irradiance_w_m2",
+    "ambient_temp__428": "ambient_temp_c",
+    "module_temp_1__429": "module_temp_c",
+    "ac_power__423": "power_kw"
+  },
+  "rows": {
+    "source": 96,
+    "valid": 55,
+    "dropped": 41
+  },
+  "mapped_sha256": "545803652345f0a4f95a909d97295eece946d7621e7452304f30fdae36a6d635",
+  "mapped_path": "data/real/pvdaq_system10_2006-07-10.csv",
+  "synthetic": false,
+  "note": "Night-time/negative-power rows were dropped to satisfy the current m10 non-negative input contract; raw source is retained for audit."
+}

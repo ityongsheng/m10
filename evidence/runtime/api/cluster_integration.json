@@ -1,0 +1,67 @@
+{
+  "date": "2026-11-22",
+  "environment": {
+    "runtime_mode": "cluster",
+    "host": "macOS Apple Silicon arm64 with Docker Desktop",
+    "api_image": "docker-api built from apache/spark:3.5.3-python3",
+    "spark": "apache/spark:3.5.3-python3, one master and one alive worker",
+    "hdfs": "bde2020/hadoop-namenode/datanode 2.0.0-hadoop3.2.1-java8",
+    "mysql": "mysql:8.4"
+  },
+  "checks": {
+    "health": {
+      "status": "ok",
+      "service": "m10",
+      "mode": "cluster"
+    },
+    "run_id": 7,
+    "dataset_id": 6,
+    "total_rows": 1686,
+    "anomaly_count": 85,
+    "execution_engine": "spark",
+    "spark_rows": 1686,
+    "hdfs_rows": 1686,
+    "hdfs_probe_path": "hdfs://namenode:9000/m10/probes/20261122T082612Z",
+    "mysql": {
+      "completed_runs": 3,
+      "records_for_run": 1686,
+      "alerts_for_run": 85
+    },
+    "hdfs": {
+      "success_marker": true,
+      "parquet_part_present": true
+    },
+    "spark_master": {
+      "alive_workers": 1,
+      "completed_m10_apps": 3,
+      "last_app_state": "FINISHED"
+    },
+    "api_pyspark_version": "3.5.3",
+    "api_root_status": 200,
+    "metrics": {
+      "run_id": 7,
+      "record_count": 1686,
+      "anomaly_count": 85,
+      "alert_count": 85,
+      "cluster_count": 3
+    }
+  },
+  "source": {
+    "dataset": "data/real/pvdaq_2107_2022-06_normalized.csv",
+    "source_rows": 1686,
+    "module_temperature_mapping": "ambient_temp_c proxy; source channel not published"
+  },
+  "evidence_commands": [
+    "docker compose -f docker/docker-compose.yml --profile cluster ps",
+    "curl --noproxy '*' http://127.0.0.1:8000/api/health",
+    "curl --noproxy '*' -X POST http://127.0.0.1:8000/api/runs -d '{\"use_real\":true,\"mode\":\"cluster\"}'",
+    "docker exec docker-mysql-1 mysql ... SELECT ...",
+    "docker exec docker-namenode-1 hdfs dfs -ls -R /m10/probes",
+    "curl --noproxy '*' http://127.0.0.1:8081/json/"
+  ],
+  "limitations": [
+    "This is a local Docker Desktop cluster rehearsal, not Windows x64 customer acceptance.",
+    "The selected PVDAQ system does not publish module temperature; module_temp_c is an explicit ambient-temperature proxy.",
+    "MySQL/HDFS volumes are local development volumes."
+  ]
+}

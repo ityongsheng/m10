@@ -1,0 +1,51 @@
+{
+  "project": "m10",
+  "sample": {
+    "path": "data/sample/pv_demo.csv",
+    "synthetic_demo": true,
+    "generator": "scripts/generate_demo_data.py",
+    "seed": 20261122,
+    "rows_expected": 576,
+    "sha256": "63267779703dd469d0cdee368c46d2e1b8afcf34d43385d38d5a8acf650a016d",
+    "label_field": "known_issue_label",
+    "label_usage": "evaluation_only"
+  },
+  "candidate_real_source": {
+    "name": "NREL PVDAQ Public Datasets",
+    "publisher": "National Renewable Energy Laboratory / U.S. Department of Energy",
+    "catalog_url": "https://catalog.data.gov/dataset/photovoltaic-data-acquisition-pvdaq-public-datasets",
+    "license": "CC BY 4.0",
+    "status": "downloaded_normalized_and_local_pipeline_verified",
+    "download_date": "2026-11-22",
+    "system_id": 2107,
+    "source_period": {
+      "start_inclusive": "2022-06-01",
+      "end_exclusive": "2022-07-01"
+    },
+    "raw_files": [
+      "data/real/pvdaq_2107_meter_15m_data.csv",
+      "data/real/pvdaq_2107_environment_data.csv",
+      "data/real/pvdaq_2107_irradiance_data.csv",
+      "data/real/pvdaq_2107_system_metadata.json"
+    ],
+    "normalized_path": "data/real/pvdaq_2107_2022-06_normalized.csv",
+    "normalized_rows": 1686,
+    "sha256_manifest": "evidence/data/pvdaq_2107.sha256",
+    "license_notice": "CC BY 4.0; attribution and source URLs are preserved in data/real/README.md",
+    "integration_evidence": "evidence/runtime/api/real_integration.json",
+    "cluster_integration_evidence": "evidence/runtime/api/cluster_integration.json",
+    "mapping_notes": [
+      "ambient_temperature_o_149575 is Fahrenheit and is converted to Celsius",
+      "system 2107 has no published module-temperature channel in the selected metadata; module_temp_c is an explicit ambient-temperature proxy"
+    ]
+  },
+  "additional_audit_slice": {
+    "dataset_id": "pvdaq-system10-2006-07-10",
+    "normalized_path": "data/real/pvdaq_system10_2006-07-10.csv",
+    "manifest_path": "data/real/pvdaq_system10_2006-07-10.manifest.json",
+    "status": "downloaded_and_local_pipeline_verified",
+    "rows": 55,
+    "source_rows": 96,
+    "dropped_rows": 41
+  }
+}

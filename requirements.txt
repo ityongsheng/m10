@@ -1,0 +1,11 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+pydantic==2.10.6
+pymysql==1.1.1
+pandas==2.2.3
+numpy==2.2.2
+scikit-learn==1.6.1
+# PySpark is optional for local portable mode and is pinned separately for cluster images.
+# pyspark==3.5.4
+

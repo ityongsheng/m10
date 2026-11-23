@@ -1,0 +1,13 @@
+.git/
+.venv/
+__pycache__/
+.pytest_cache/
+runtime/
+logs/
+artifacts/
+evidence/
+project_private.json
+*开题报告.docx
+docker/.env
+*.sqlite3
+.DS_Store

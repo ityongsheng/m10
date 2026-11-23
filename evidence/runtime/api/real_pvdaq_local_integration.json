@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-22",
+  "source": {
+    "dataset": "NREL/DOE PVDAQ Public Datasets",
+    "system_id": 2107,
+    "normalized_file": "data/real/pvdaq_2107_2022-06_normalized.csv",
+    "sha256": "48d5d742c2a3ed32c7090c865e322c246aafb573ad93e95a93faabd2b4ae67af",
+    "license": "CC BY 4.0",
+    "module_temperature_mapping": "ambient_temp_c proxy; source channel not published"
+  },
+  "environment": {
+    "runtime_mode": "local",
+    "database": "SQLite temporary database",
+    "source_rows": 1686
+  },
+  "checks": {
+    "import_valid_rows": 1686,
+    "import_invalid_rows": 0,
+    "run_total_rows": 1686,
+    "run_anomaly_count": 85,
+    "run_cluster_count": 3,
+    "alerts": 85
+  },
+  "limitations": [
+    "This is a public PVDAQ system slice, not the student's field station data.",
+    "The selected source does not publish module temperature; module_temp_c is an explicit ambient-temperature proxy.",
+    "This evidence verifies local processing; Spark/HDFS/MySQL cluster execution remains separate."
+  ]
+}

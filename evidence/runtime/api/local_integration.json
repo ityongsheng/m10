@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-22",
+  "environment": {
+    "os": "macOS 27.0.1",
+    "cpu": "Apple Silicon arm64",
+    "python": "3.13.3",
+    "runtime_mode": "local",
+    "database": "SQLite temporary database"
+  },
+  "checks": {
+    "health": 200,
+    "index": 200,
+    "static_app_js": 200,
+    "static_app_css": 200,
+    "sample_data": 200,
+    "import_status": 200,
+    "run_status": 200,
+    "run_total_rows": 576,
+    "run_anomaly_count": 29,
+    "run_cluster_count": 3,
+    "overview_total": 576,
+    "records_returned": 500,
+    "alerts_returned": 29
+  },
+  "data_status": "synthetic_demo_only",
+  "limitations": [
+    "The fixture is deterministic synthetic data and is not a field measurement.",
+    "The records endpoint defaults to 500 rows; the API supports a higher limit when requested."
+  ]
+}

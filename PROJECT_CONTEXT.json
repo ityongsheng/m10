@@ -1,0 +1,70 @@
+{
+  "project_id": "m10",
+  "topic": "基于Spark的光伏电站发电效率异常检测系统的设计与实现",
+  "status": "cluster_verified_windows_pending",
+  "student": {
+    "name": "待填写（见本地 project_private.json）",
+    "student_id": "待填写（见本地 project_private.json）",
+    "major": "大数据工程技术",
+    "college": "人工智能学院"
+  },
+  "requirements_sources": [
+    {
+      "path": "本机开题报告原件（公开仓库不包含）",
+      "sha256": "本地 project_private.json 中保存",
+      "role": "requirements"
+    }
+  ],
+  "rules": {
+    "program": "U-PROG-20261026 / v1.0",
+    "thesis": {
+      "school": "河北工业职业技术大学",
+      "profile_version": "1.0",
+      "profile_sha256": "f9d7e3a7e85dbeb2ac284e4b48f416a35f4a9bb6a1a6a8dd70854a1cd4c7ef0e",
+      "official_policy_independently_verified": false
+    }
+  },
+  "stack": [
+    "Python",
+    "FastAPI",
+    "PySpark 3.x",
+    "Hadoop/HDFS 3.x",
+    "MySQL 8.4",
+    "HTML/CSS/JavaScript"
+  ],
+  "modes": {
+    "local": "本地轻量演示，SQLite/本地文件回退",
+    "cluster": "Docker Spark/HDFS/MySQL 联调"
+  },
+  "entrypoints": {
+    "planned": [
+      "start.cmd",
+      "stop.cmd",
+      "launcher.json"
+    ],
+    "status": "local_verified_windows_pending"
+  },
+  "evidence": {
+    "real_runtime_screenshots": 5,
+    "tests": "pytest 8 passed; synthetic and PVDAQ API smoke passed",
+    "thesis": {
+      "docx": "artifacts/thesis/m10_毕业设计说明书_河北工业职业技术大学_v1.0_本地实测稿.docx",
+      "pdf": "artifacts/thesis/m10_毕业设计说明书_河北工业职业技术大学_v1.0_本地实测稿.pdf",
+      "render_report": "evidence/thesis/RENDER_REPORT.md",
+      "pages": 35,
+      "status": "rendered_and_page_checked_cluster_verified_draft",
+      "references": "references_audit.md and vip_audit.json contain 18 audited entries; DOCX/PDF rendered and page-checked; VIP public metadata verified, school-account export optional"
+    },
+    "windows_x64": "not_verified",
+    "real_data": "PVDAQ system 2107 raw files downloaded; June 2022 normalized slice contains 1686 rows",
+    "cluster": "Docker Desktop arm64 cluster verified: Spark/HDFS/MySQL chain with PVDAQ 1686 rows; evidence/runtime/api/cluster_integration.json"
+  },
+  "limitations": [
+    "当前实现以开题报告为需求来源，没有历史源码可迁移",
+    "本地模式已用 576 行合成演示数据完成端到端运行",
+    "演示 CSV 为合成数据，需在论文中明确标注",
+    "PVDAQ system 2107 is integrated with an explicit ambient-temperature proxy for the missing module-temperature field",
+    "Windows x64 构建与客户验收尚未执行",
+    "Docker 集群已在本机 arm64 联调验证；该结果不替代 Windows x64 客户验收"
+  ]
+}

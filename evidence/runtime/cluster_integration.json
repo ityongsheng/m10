@@ -1,0 +1,69 @@
+{
+  "date": "2026-11-22",
+  "environment": {
+    "host_arch": "arm64",
+    "docker_server": "29.9.3",
+    "compose": "v5.7.0",
+    "compose_file": "docker/docker-compose.yml",
+    "profile": "cluster",
+    "api_host": "http://127.0.0.1:8000",
+    "images": {
+      "api": "docker-api@sha256:43c43fa2254b5332a808ca6bb72ba2a171f7daf5e12f91547a78ee062bc04115",
+      "spark": "apache/spark:3.5.3-python3@sha256:d19f2a058df85a09250d8f4f69ee8e70e7c60db93c4071eb27d40f47d2061a63",
+      "mysql": "mysql:8.4@sha256:ae113cae2661960c4665a586812ae8150b2a133772a9f3ad63d1f1ae4f9e8ce7",
+      "hadoop_namenode": "bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8@sha256:839ec11d95f84c096d3621996dc3ab95eadd30f15025903305cd44d032f7491a"
+    }
+  },
+  "services": {
+    "api": "running; /api/health returned status=ok, mode=cluster",
+    "mysql": "running; healthy; host port 3307",
+    "namenode": "running; healthy; host ports 9000 and 9870",
+    "datanode": "running; healthy",
+    "spark_master": "running; Spark UI http://127.0.0.1:8081 reported Workers (1)",
+    "spark_worker": "running"
+  },
+  "real_dataset": {
+    "source": "NREL/DOE PVDAQ system 2107 via OEDI/Data.gov catalog",
+    "file": "data/real/pvdaq_2107_2022-06_normalized.csv",
+    "sha256": "48d5d742c2a3ed32c7090c865e322c246aafb573ad93e95a93faabd2b4ae67af",
+    "dataset_id": 3,
+    "input_rows": 1686,
+    "valid_rows": 1686,
+    "synthetic_demo": false
+  },
+  "api_cluster_run": {
+    "run_id": 5,
+    "mode": "cluster",
+    "status": "completed",
+    "total_rows": 1686,
+    "anomaly_count": 85,
+    "cluster_count": 3,
+    "execution_engine": "spark",
+    "spark_rows": 1686,
+    "hdfs_rows": 1686,
+    "hdfs_probe_path": "hdfs://namenode:9000/m10/probes/20261122T081947Z",
+    "overview": {
+      "cluster_counts": {"0": 318, "1": 891, "2": 477},
+      "avg_power_kw": 208.02429413760404,
+      "avg_efficiency_proxy": 0.3737055685898883
+    }
+  },
+  "mysql_verification": {
+    "query": "SELECT COUNT(*) FROM records WHERE run_id=5; SELECT SUM(is_anomaly) FROM records WHERE run_id=5;",
+    "records": 1686,
+    "anomalies": 85,
+    "processing_run": {"mode": "cluster", "status": "completed", "total_rows": 1686, "anomaly_count": 85}
+  },
+  "hdfs_verification": {
+    "path": "/m10/probes/20261122T081947Z",
+    "entries": ["_SUCCESS", "part-00000-*.snappy.parquet"],
+    "parquet_bytes": 30671,
+    "readback_rows": 1686
+  },
+  "limitations": [
+    "This is a local Docker Desktop rehearsal on an arm64 host; it does not establish Windows x64 customer acceptance.",
+    "Hadoop images reported linux/amd64 on linux/arm64 and were run through Docker emulation; performance is not representative.",
+    "The PVDAQ source has no module-temperature channel for system 2107; module_temp_c is documented as an ambient proxy.",
+    "Cluster credentials are local development values in docker-compose.yml and must not be reused in production."
+  ]
+}

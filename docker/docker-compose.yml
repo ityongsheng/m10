@@ -1,0 +1,90 @@
+services:
+  mysql:
+    image: mysql:8.4
+    profiles: [cluster]
+    environment:
+      MYSQL_DATABASE: m10
+      MYSQL_USER: m10
+      MYSQL_PASSWORD: ${M10_DB_PASSWORD:?Set M10_DB_PASSWORD in docker/.env}
+      MYSQL_ROOT_PASSWORD: ${M10_DB_ROOT_PASSWORD:?Set M10_DB_ROOT_PASSWORD in docker/.env}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    profiles: [cluster]
+    environment:
+      CLUSTER_NAME: m10
+      CORE_CONF_fs_defaultFS: hdfs://namenode:9000
+    ports:
+      - "9870:9870"
+      - "9000:9000"
+    volumes:
+      - hdfs-name:/hadoop/dfs/name
+
+  datanode:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    profiles: [cluster]
+    environment:
+      SERVICE_DEPENDS_ON: namenode:9870
+      CORE_CONF_fs_defaultFS: hdfs://namenode:9000
+    volumes:
+      - hdfs-data:/hadoop/dfs/data
+    depends_on:
+      - namenode
+
+  spark-master:
+    image: apache/spark:3.5.3-python3
+    profiles: [cluster]
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.master.Master"]
+    ports:
+      - "7077:7077"
+      - "8081:8080"
+
+  spark-worker:
+    image: apache/spark:3.5.3-python3
+    profiles: [cluster]
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
+    depends_on:
+      - spark-master
+    volumes:
+      # The API driver writes uploaded CSVs here; workers need the same path
+      # when Spark reads the file:// source in standalone mode.
+      - m10-runtime:/app/runtime
+
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    profiles: [cluster]
+    environment:
+      M10_RUNTIME_MODE: cluster
+      M10_DATABASE_URL: mysql+pymysql://m10:${M10_DB_PASSWORD:?Set M10_DB_PASSWORD in docker/.env}@mysql:3306/m10
+      M10_HDFS_URI: hdfs://namenode:9000
+      SPARK_MASTER_URL: spark://spark-master:7077
+      PYTHONPATH: /opt/spark/python:/opt/spark/python/lib/pyspark.zip:/opt/spark/python/lib/py4j-0.10.9.7-src.zip
+    ports:
+      # Override on a host that already uses 8000, e.g. M10_API_HOST_PORT=18000.
+      - "${M10_API_HOST_PORT:-8000}:8000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      spark-master:
+        condition: service_started
+      namenode:
+        condition: service_started
+    volumes:
+      - m10-runtime:/app/runtime
+
+volumes:
+  mysql-data:
+  hdfs-name:
+  hdfs-data:
+  m10-runtime:

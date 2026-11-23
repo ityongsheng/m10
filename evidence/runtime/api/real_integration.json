@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-22",
+  "environment": {
+    "runtime_mode": "local",
+    "database": "temporary SQLite database",
+    "dataset": "data/real/pvdaq_2107_2022-06_normalized.csv",
+    "source": "NREL/DOE PVDAQ system 2107 via OEDI data lake"
+  },
+  "checks": {
+    "import_status": 200,
+    "input_rows": 1686,
+    "valid_rows": 1686,
+    "invalid_rows": 0,
+    "run_status": 200,
+    "preset_run_status": 200,
+    "run_total_rows": 1686,
+    "run_anomaly_count": 85,
+    "run_cluster_count": 3,
+    "records_returned": 1686,
+    "alerts_returned": 85
+  },
+  "data_status": "real_public_pvdaq_slice",
+  "limitations": [
+    "The selected slice uses ambient temperature as the module_temp_c proxy because PVDAQ system 2107 does not publish a module-temperature channel in the selected metadata.",
+    "This evidence proves local API and algorithm integration; Docker Spark/HDFS/MySQL execution is recorded separately."
+  ]
+}
