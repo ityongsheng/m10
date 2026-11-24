@@ -8,8 +8,8 @@ from docx.shared import Cm, Pt
 
 ROOT = Path(__file__).resolve().parents[2]
 DOCX = ROOT/'artifacts/thesis/m10_毕业设计说明书_河北工业职业技术大学_v1.0_本地实测稿.docx'
-PDF = ROOT/'artifacts/thesis/rendered_expanded3/m10_毕业设计说明书_河北工业职业技术大学_v1.0_本地实测稿.pdf'
-RENDER_DIR = ROOT/'artifacts/thesis/rendered_expanded3'
+PDF = ROOT/'evidence/thesis/rendered_references_final_20261124/m10_毕业设计说明书_河北工业职业技术大学_v1.0_本地实测稿.pdf'
+RENDER_DIR = ROOT/'evidence/thesis/rendered_references_final_20261124'
 
 TOL = 0.01
 
@@ -161,12 +161,12 @@ else:
 # Section/page map as reviewed visually.
 page_map={
  '1':'封面','2':'原创性声明','3':'版权使用授权书','4':'中文摘要','5':'英文摘要','6':'目录',
- '7':'第1章开头','8':'第1章续页','9':'第2章开头','10':'第2章续页','11':'第2章续页/第3章准备',
- '12':'第3章开头','13':'第3章图示','14':'第3章数据库表','15':'第3章数据库表','16':'第3章数据库表',
- '17':'第3章数据库表','18':'第4章开头','19':'第4章算法图示','20':'第4章表格','21':'第4章算法细节',
- '22':'第4章/第5章开头','23':'第5章截图','24':'第5章截图','25':'第5章截图/5.3','26':'第5章实现',
- '27':'第5章实现','28':'第6章开头','29':'第6章测试策略','30':'第6章结果','31':'第6章结果/局限',
- '32':'第6章局限/第7章','33':'第7章/参考文献','34':'参考文献','35':'参考文献/致谢/附录'
+ '7':'第1章开头、研究现状与正文引注','8':'第1章续页','9':'第1章末尾/第2章开头','10':'第2章技术与需求','11':'第2章用例与约束',
+ '12':'第2章末尾/第3章开头','13':'第3章模块图','14':'第3章数据库设计','15':'第3章总体设计续页','16':'第3章数据表',
+ '17':'第3章数据表','18':'第3章末尾/第4章开头','19':'第4章算法图示','20':'第4章表格','21':'第4章算法细节',
+ '22':'第4章算法续页','23':'第4章末尾/第5章开头','24':'第5章截图','25':'第5章截图','26':'第5章实现',
+ '27':'第5章实现','28':'第5章部署边界','29':'第5章末尾/第6章开头','30':'第6章测试策略','31':'第6章结果',
+ '32':'第6章局限','33':'第6章末尾/第7章开头','34':'第7章末尾/参考文献前15条','35':'参考文献后3条/致谢/附录'
 }
 result={'docx':str(DOCX),'pdf':str(PDF),'rules_source':'河北工业职业技术大学 v1.0 本地规则包','checks':checks,'three_line_tables':three_line,'font_counts':dict((str(k),v) for k,v in font_counter.items()),'page_map':page_map,'summary':{'passed':sum(c['ok'] for c in checks),'failed':sum(not c['ok'] for c in checks),'total':len(checks)}}
 json_path=ROOT/'evidence/thesis/template_audit.json'; json_path.write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
@@ -192,7 +192,7 @@ for p,desc in page_map.items(): md.append(f'- PDF 第 {p} 页：{desc}。')
 md.append('\n## 复核命令与证据\n')
 md.append('```bash')
 md.append("python3 evidence/thesis/build_thesis.py")
-md.append(".../render_docx.py artifacts/thesis/m10_毕业设计说明书_河北工业职业技术大学_v1.0_本地实测稿.docx --output_dir artifacts/thesis/rendered_final6 --emit_pdf")
+md.append('FONTCONFIG_FILE="$PWD/evidence/thesis/fontconfig/fonts.conf" .../render_docx.py artifacts/thesis/m10_毕业设计说明书_河北工业职业技术大学_v1.0_本地实测稿.docx --output_dir evidence/thesis/rendered_references_final_20261124 --emit_pdf')
 md.append(".../a11y_audit.py artifacts/thesis/m10_毕业设计说明书_河北工业职业技术大学_v1.0_本地实测稿.docx --out_json evidence/thesis/a11y_final.json")
 md.append("python -m app.cli artifacts/thesis/m10_毕业设计说明书_河北工业职业技术大学_v1.0_本地实测稿.docx --json evidence/thesis/format_audit_final.json --html evidence/thesis/format_audit_final.html  # optional local detector")
 md.append('```')

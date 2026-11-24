@@ -9,6 +9,7 @@ from docx.oxml.ns import qn
 from PIL import Image, ImageDraw, ImageFont
 import sys
 import json
+import re
 
 ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/'artifacts/thesis'
@@ -186,13 +187,13 @@ def add_toc(doc):
     p=doc.add_paragraph(); set_para_format(p, alignment=WD_ALIGN_PARAGRAPH.CENTER, before=40, after=20, line=20, first=0)
     r=p.add_run('目  录'); set_run_font(r, HEAD_EA, ASCII, 15, bold=True)
     entries=[
-        ('第1章 绪论','1'),('1.1 研究背景','1'),('1.2 研究内容','1'),('1.3 论文组织','1'),
-        ('第2章 相关技术与需求分析','3'),('2.1 相关技术','3'),('2.2 功能需求','3'),('2.3 非功能需求','3'),
-        ('第3章 系统总体设计','6'),('3.1 总体架构','6'),('3.2 功能模块设计','6'),('3.3 数据库设计','7'),
+        ('第1章 绪论','1'),('1.1 研究背景','1'),('1.2 研究内容','1'),('1.3 论文组织','2'),
+        ('第2章 相关技术与需求分析','3'),('2.1 相关技术','3'),('2.2 功能需求','3'),('2.3 非功能需求','4'),
+        ('第3章 系统总体设计','6'),('3.1 总体架构','6'),('3.2 功能模块设计','7'),('3.3 数据库设计','8'),
         ('第4章 数据处理与异常检测算法设计','12'),('4.1 数据清洗与特征计算','12'),('4.2 K-Means 工况聚类','13'),('4.3 孤立森林异常检测','13'),
-        ('第5章 系统实现','16'),('5.1 后端接口实现','16'),('5.2 前端工作台实现','16'),('5.3 启动与交付实现','19'),
-        ('第6章 系统测试与结果分析','22'),('6.1 测试环境','22'),('6.2 功能测试结果','22'),('6.3 局限与未验证项','23'),
-        ('第7章 总结与展望','26'),('参考文献','27'),('致谢','29'),('附录A 接口与运行证据','29')]
+        ('第5章 系统实现','17'),('5.1 后端接口实现','17'),('5.2 前端工作台实现','17'),('5.3 启动与交付实现','20'),
+        ('第6章 系统测试与结果分析','23'),('6.1 测试环境','23'),('6.2 功能测试结果','23'),('6.3 局限与未验证项','24'),
+        ('第7章 总结与展望','27'),('参考文献','28'),('致谢','29'),('附录A 接口与运行证据','29')]
     for title,page in entries:
         p=doc.add_paragraph(); set_para_format(p, alignment=WD_ALIGN_PARAGRAPH.LEFT, before=0, after=0, line=20, first=0, left=0.4)
         r=p.add_run(f'{title}'+'.'*(max(3,52-len(title)*2))+page); set_run_font(r, HEAD_EA if title.startswith('第') or title in ('参考文献','致谢') or title.startswith('附录') else BODY_EA, ASCII, 12)
@@ -324,7 +325,11 @@ body_section=D.add_section(WD_SECTION.NEW_PAGE); configure_section(body_section,
 # chapters
 add_heading(D,'第1章 绪论',1)
 add_heading(D,'1.1 研究背景',2)
-add_para(D,'光伏电站的辐照度、环境温度、组件温度和输出功率具有明显的时序波动。相同设备在不同天气和时段下会产生不同的输出水平，使用单一固定阈值容易把正常的气象变化判断为设备异常。运维人员需要一种能够整理多字段监测记录、区分运行工况并给出异常线索的工具。')
+add_para(D,'光伏电站的辐照度、环境温度、组件温度和输出功率具有明显的时序波动。相同设备在不同天气和时段下会产生不同的输出水平，使用单一固定阈值容易把正常的气象变化判断为设备异常。运维人员需要一种能够整理多字段监测记录、区分运行工况并给出异常线索的工具{cite:ma_review,zheng}。')
+add_para(D,'在功率数据质量研究中，马天东等提出变点与四分位法组合的思路{cite:ma_change}；何志锋等在双面光伏发电量预测中处理了辐照度、温度和多源数据对齐问题{cite:he2026}。积灰损失评估说明发电偏差还可能来自组件状态，不能仅由异常分数推断具体故障原因{cite:li_dust}。有关学位论文分别将气象分型和孤立森林用于光伏功率数据处理{cite:yao,feng}，为本课题的特征设计和结果解释提供了参照。')
+add_para(D,'面向电力数据处理，已有研究讨论 GPU 与 Spark 的联合分析{cite:su}，也实现了基于 Spark 云平台的电力负载预测系统{cite:li_spark}；宁夏光伏产业研究提出了 NB-IoT 数据平台{cite:wang_nbiot}。这些工作分别关注计算能力、平台实现和数据接入。本文选择离线 CSV 工作流与可切换的 Spark 集群运行模式，重点验证输入、处理、持久化和查询的完整链路。')
+add_para(D,'光伏故障与状态评估还存在多种技术路线：改进 BP-Bagging 方法用于故障诊断{cite:qi}，图像特征方法用于异常数据识别{cite:qiu}，概率神经网络用于阵列监测{cite:cheng}；数字孪生学位研究{cite:sun}和多模态诊断平台{cite:ma_thesis}进一步扩展了状态评估与故障分类能力。上述研究使用的数据形态、故障标签和部署条件并不相同，本文只比较其问题与方法，不把其识别精度直接搬到本系统。')
+add_para(D,'国外研究中，CNN-ViT 方法面向光伏场站红外图像{cite:darban}，强化学习引导的孤立森林研究动态调节污染率{cite:sharma}，状态空间模型则利用功率、辐照度和温度序列估计运行状态{cite:wang_state}。本文使用的输入是结构化时序 CSV，采用固定污染率和分工况异常筛查；图像诊断、动态调参和有标签的故障判别均未纳入本次实现。')
 add_heading(D,'1.2 研究内容',2)
 add_para(D,'本项目围绕数据导入与清洗、效率代理特征计算、工况聚类、异常检测、结果查询和告警展示展开。实现阶段优先完成不依赖外部设备的 CSV 工作流，并把 Spark/HDFS/MySQL 集群作为可切换的联调路线。')
 add_heading(D,'1.3 论文组织',2)
@@ -383,37 +388,56 @@ add_heading(D,'第7章 总结与展望',1)
 add_para(D,'本文完成了一个面向光伏监测 CSV 的本地异常检测工作台，实现了数据导入、清洗、效率代理特征计算、K-Means 工况聚类、孤立森林异常检测、结果查询和告警展示。系统分别使用 576 条固定种子合成记录和 1686 条 PVDAQ system 2107 真实公开记录完成了本地接口、数据库和页面联调，并在 Docker Desktop 集群中完成 Spark、HDFS 与 MySQL 的真实链路验证。')
 add_para(D,'后续工作包括在 Windows 10/11 x64 环境构建离线包，补充独立样本上的人工标注或可解释评价指标，并在获得模块温度实测通道后替换当前环境温度代理。')
 expand_chapter7(lambda text, level: add_heading(D, text, level), lambda text: add_para(D, text))
+# The bibliography is assembled from citations in body order. Source URLs and
+# correction notes stay in evidence/thesis/references_audit.md, not in the thesis.
+ref_text={
+ 'ma_review':'马天东, 耿天翔, 李峰, 等. 光伏电站功率数据异常检测技术研究综述[J]. 微型电脑应用, 2024, 40(7): 72-75, 92.',
+ 'zheng':'郑开焰. 光伏系统在线监测及故障诊断技术研究[D]. 厦门理工学院, 2024.',
+ 'ma_change':'马天东, 耿天翔, 李峰, 钟海亮. 基于优化变点-四分位法的光伏异常数据检测[J]. 微型电脑应用, 2024, 40(6): 105-108.',
+ 'he2026':'何志锋, 吴煜晖, 邹海青. 基于元数据模型的双面光伏发电系统发电量预测方法研究[J]. 太阳能, 2026(8): 61-68.',
+ 'li_dust':'李杰. 基于气象数据的光伏组件积灰损失评估方法研究[J]. 太阳能, 2024(9).',
+ 'yao':'姚钦才. 基于气象特征重构及残差修正的光伏发电功率预测研究[D]. 东南大学, 2024.',
+ 'feng':'冯东洋. 基于混合模型的短期光伏功率预测方法研究[D]. 东南大学, 2024.',
+ 'su':'苏立伟, 刘振华, 杜礼锋, 等. 基于GPU+Spark的电力大数据分析算法[J]. 沈阳工业大学学报, 2023, 45(4): 371-375.',
+ 'li_spark':'李磊, 王云, 邓洪波, 梁志明. Spark云平台电力负载预测系统的设计与实现[J]. 实验室研究与探索, 2023, 42(5): 41-45.',
+ 'wang_nbiot':'Wang H, Chong W. Exploration on the construction of intelligent big data platform of Ningxia solar photovoltaic industry based on NB-IoT[J]. Journal of Electronic Research and Application, 2025, 9(1): 295-301.',
+ 'qi':'祁炜雯, 张俊, 吴洋, 等. 基于改进BP-Bagging算法的光伏电站故障诊断方法[J]. 浙江电力, 2024, 43(3): 65-74.',
+ 'qiu':'裘愉涛, 张磊, 周开运, 等. 基于图像特征检测的光伏异常数据识别算法[J]. 浙江电力, 2025, 44(5): 42-52.',
+ 'cheng':'程航, 张晖, 代家昆, 等. 基于数据驱动和概率神经网络的光伏阵列智能故障诊断与监控[J]. 微型电脑应用, 2026, 42(7): 21-24, 29.',
+ 'sun':'孙孟超. 基于数字孪生的光伏阵列状态评估及故障诊断[D]. 华北电力大学, 2025.',
+ 'ma_thesis':'马紫乔. 基于深度学习的光伏故障诊断及多模态信息平台构建[D]. 燕山大学, 2025.',
+ 'darban':'Darban A A, Rajabi Nasab M, Abdollahi A. Anomaly detection in solar farms with a hybrid CNN-ViT model to enhance accuracy and efficiency[J]. International Journal of Ambient Energy, 2025, 46(1): 2541270.',
+ 'sharma':'Sharma G, Khurana S, Sharma B, et al. A self-tuning reinforcement learning-driven isolation forest framework for scalable and efficient anomaly detection in solar power plants[J]. International Journal of Computational Intelligence Systems, 2026, 19: 133.',
+ 'wang_state':'Wang X, Du J, Zhang G, et al. State space model for anomaly detection of distributed photovoltaic power generation systems[J]. Energy Informatics, 2025, 8: 141.'
+}
+citation_order=[]
+for p in D.paragraphs:
+ raw=p.text
+ if '{cite:' not in raw: continue
+ parts=re.split(r'(\{cite:[a-z0-9_,]+\})',raw)
+ p.clear()
+ for part in parts:
+  if not part: continue
+  if part.startswith('{cite:'):
+   keys=part[6:-1].split(',')
+   for key in keys:
+    if key not in ref_text: raise ValueError(f'Unknown citation: {key}')
+    if key not in citation_order: citation_order.append(key)
+   r=p.add_run('['+','.join(str(citation_order.index(key)+1) for key in keys)+']')
+   set_run_font(r,BODY_EA,ASCII,10.5); r.font.superscript=True
+  else: set_run_font(p.add_run(part),BODY_EA,ASCII,12)
+if len(citation_order)!=18: raise ValueError(f'Expected 18 cited works, got {len(citation_order)}')
 add_heading(D,'参考文献',1)
-refs=[
- '马天东, 耿天翔, 李峰, 等. 光伏电站功率数据异常检测技术研究综述[J]. 微型电脑应用, 2024, 40(07): 72-75, 92.',
- '马天东, 耿天翔, 李峰, 钟海亮. 基于优化变点-四分位法的光伏异常数据检测[J]. 微型电脑应用, 2024, 40(06): 105-108.',
- '裘愉涛, 张磊, 周开运, 等. 基于图像特征检测的光伏异常数据识别算法[J]. 浙江电力, 2025, 44(05): 42-52. DOI:10.19585/j.zjdl.202505005.',
- '祁炜雯, 张俊, 吴洋, 等. 基于改进BP-Bagging算法的光伏电站故障诊断方法[J]. 浙江电力, 2024, 43(03): 65-74. DOI:10.19585/j.zjdl.202403008.',
- '徐恒辉, 姚杰, 周萍, 等. 基于运行数据的光伏电站状态评估方法研究[J]. 电力科技与环保, 2023, 39(05): 450-456.',
- '程航, 张晖, 代家昆, 等. 基于数据驱动和概率神经网络的光伏阵列智能故障诊断与监控[J]. 微型电脑应用, 2026, 42(07): 21-24, 29.',
- '徐志保, 张认成. 结合小波变换与支持向量机的光伏阵列故障检测算法[J]. 吉林大学学报（信息科学版）, 2026, 44(05): 1169-1176. DOI:10.19292/j.cnki.jdxxp.2026.05.010.',
- '龚莺飞, 鲁宗相, 乔颖, 等. 基于Copula理论的光伏功率高比例异常数据机器识别算法[J]. 电力系统自动化, 2016, 40(09): 16-22.',
- '杨茂, 孟玲建, 李大勇, 等. 基于类3σ准则的光伏功率异常数据识别[J]. 可再生能源, 2018, 36(10): 1443-1448.',
- '杨茂, 黄鑫. 基于光照过程特征分析的光伏功率异常数据识别算法[J]. 电力系统自动化, 2019, 43(06): 64-69.',
- 'Wang X, Du J, Zhang G, et al. State space model for anomaly detection of distributed photovoltaic power generation systems[J]. Energy Informatics, 2025, 8: 141. DOI:10.1186/s42162-025-00598-2.',
- 'Miraftabzadeh S M, Longo M, Leva S, et al. Data anomaly detection in photovoltaic power time-series via unsupervised deep learning with insufficient information[J]. Sustainable Energy, Grids and Networks, 2025, 43: 101769. DOI:10.1016/j.segan.2025.101769.',
- 'Li D, Zhang Y, Yang Z, et al. Sensing anomaly of photovoltaic systems with sequential conditional variational autoencoder[J]. Applied Energy, 2024, 353: 122124. DOI:10.1016/j.apenergy.2023.122124.',
- 'El-Banby G M, Moawad N M, Abouzalm B A, et al. Photovoltaic system fault detection techniques: a review[J]. Neural Computing and Applications, 2023, 35: 24829-24842. DOI:10.1007/s00521-023-09041-7.',
- 'Ibrahim M, Alsheikh A, Awaysheh F M, et al. Machine learning schemes for anomaly detection in solar power plants[J]. Energies, 2022, 15(03): 1082. DOI:10.3390/en15031082.',
- 'Branco P, Gonçalves F, Costa A C. Tailored algorithms for anomaly detection in photovoltaic systems[J]. Energies, 2020, 13(01): 225. DOI:10.3390/en13010225.',
- 'Vlaminck M, Heidbuchel R, Philips W, Luong H. Region-based CNN for anomaly detection in PV power plants using aerial imagery[J]. Sensors, 2022, 22(03): 1244. DOI:10.3390/s22031244.',
- 'Osmani K, Haddad A, Lemenand T, et al. A critical review of PV systems’ faults with the relevant detection methods[J]. Energy Nexus, 2023, 12: 100257. DOI:10.1016/j.nexus.2023.100257.'
-]
-for i,ref in enumerate(refs,1):
+for i,key in enumerate(citation_order,1):
  if i==16:
-  # Start the final reference block in a fresh body section so the repeated
-  # header remains visible in both Word and LibreOffice renders.
-  ref_sec = D.add_section(WD_SECTION.NEW_PAGE)
+  # The final references begin on the next body page. A new section repeats
+  # the school header in both Word and LibreOffice while continuing at 29.
+  ref_sec=D.add_section(WD_SECTION.NEW_PAGE)
   configure_section(ref_sec, body=True)
-  pg_num = ref_sec._sectPr.find(qn('w:pgNumType'))
-  if pg_num is not None: pg_num.set(qn('w:start'), '29')
- p=D.add_paragraph(); set_para_format(p,alignment=WD_ALIGN_PARAGRAPH.LEFT,before=3,after=0,line=16,first=-21.0,left=0.74); r=p.add_run(f'[{i}] {ref}'); set_run_font(r,BODY_EA,ASCII,10.5)
-add_para(D,'文献说明：本稿参考文献共 18 条，其中 10 条中文条目同时有 CNKI 合作期刊门户/参考文献页和 CQVIP 公开检索页元数据，8 条英文条目来自 Springer、Elsevier 或 MDPI 出版社/DOI 页面；核验链接、访问日期和条目边界见 evidence/thesis/references_audit.md 与 evidence/thesis/vip_audit.json。正式提交前可按学校账号导出 GB/T 7714 记录并检查正文引注顺序。')
+  pg_num=ref_sec._sectPr.find(qn('w:pgNumType'))
+  if pg_num is not None: pg_num.set(qn('w:start'),'29')
+ p=D.add_paragraph(); set_para_format(p,alignment=WD_ALIGN_PARAGRAPH.LEFT,before=3,after=0,line=16,first=-21.0,left=0.74)
+ set_run_font(p.add_run(f'[{i}] {ref_text[key]}'),BODY_EA,ASCII,10.5)
 add_heading(D,'致谢',1)
 add_para(D,'感谢指导教师在课题方向、技术路线和实现过程中的指导。感谢学校提供的学习与实验条件。')
 add_heading(D,'附录A 接口与运行证据',1)

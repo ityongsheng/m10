@@ -12,6 +12,7 @@ __pycache__/
 project_private.json
 *开题报告.docx
 artifacts/thesis/
+evidence/thesis/rendered_*/
 evidence/requirements/source.sha256
 evidence/thesis/RENDER_REPORT.md
 evidence/thesis/WORDCOUNT_REPORT.md
